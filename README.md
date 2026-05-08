@@ -13,8 +13,6 @@ A production-grade multimodal agentic research engine designed to automate deep 
 
 ## System Architecture
 
-![Architecture Diagram](architecture.md)
-
 ### Core Components
 
 1. **Ingestion Layer**
@@ -213,14 +211,6 @@ We welcome contributions to improve the Araya Research Engine. Please follow the
 5. Open a Pull Request
 
 Please ensure your code follows the project's coding standards and includes appropriate tests.
-
-## License
-
-This project is proprietary software developed by Araya Labs. All rights reserved.
-
-## Contact
-
-Araya Labs Team - [website/contact information]
 
 ## Acknowledgments
 
