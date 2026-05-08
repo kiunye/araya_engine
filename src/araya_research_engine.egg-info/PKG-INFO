@@ -1,0 +1,33 @@
+Metadata-Version: 2.4
+Name: araya-research-engine
+Version: 0.1.0
+Summary: Multi-agent research engine for automated due diligence.
+Author: Araya Labs Team
+Requires-Dist: langchain
+Requires-Dist: langchain-core
+Requires-Dist: langgraph
+Requires-Dist: langchain-google-genai
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: pydantic
+Requires-Dist: pydantic-settings
+Requires-Dist: jinja2
+Requires-Dist: opentelemetry-api
+Requires-Dist: opentelemetry-sdk
+Requires-Dist: opentelemetry-exporter-otlp
+Requires-Dist: opentelemetry-instrumentation-fastapi
+Requires-Dist: httpx
+Requires-Dist: qdrant-client
+Requires-Dist: google-generativeai
+Requires-Dist: python-dotenv
+Requires-Dist: pytest
+Requires-Dist: pytest-asyncio
+Provides-Extra: ingest-pdf
+Requires-Dist: docling; extra == "ingest-pdf"
+Provides-Extra: ingest-audio
+Requires-Dist: deepgram-sdk; extra == "ingest-audio"
+Provides-Extra: ingest-web
+Requires-Dist: playwright; extra == "ingest-web"
+Requires-Dist: markdownify; extra == "ingest-web"
+Provides-Extra: all
+Requires-Dist: araya-research-engine[ingest-audio,ingest-pdf,ingest-web]; extra == "all"

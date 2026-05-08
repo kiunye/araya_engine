@@ -19,6 +19,7 @@ class SearchAgent:
     def __init__(self):
         self.model = get_model("gemini-1.5-flash")
         self.serper_api_key = settings.SERPER_API_KEY if hasattr(settings, 'SERPER_API_KEY') else None
+        self._http_client = None
 
     async def run(self, state: ResearchState) -> Dict[str, Any]:
         objective = state.get("objective", "")
@@ -72,23 +73,24 @@ class SearchAgent:
 
     async def _search_serper(self, query: str) -> List[Dict[str, Any]]:
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    "https://google.serper.dev/search",
-                    json={"q": query, "num": 5},
-                    headers={"X-API-KEY": self.serper_api_key},
-                    timeout=10.0
-                )
-                response.raise_for_status()
-                data = response.json()
-                results = []
-                for item in data.get("organic", []):
-                    results.append({
-                        "title": item.get("title", ""),
-                        "url": item.get("link", ""),
-                        "snippet": item.get("snippet", "")
-                    })
-                return results
+            if self._http_client is None:
+                self._http_client = httpx.AsyncClient()
+            response = await self._http_client.post(
+                "https://google.serper.dev/search",
+                json={"q": query, "num": 5},
+                headers={"X-API-KEY": self.serper_api_key},
+                timeout=settings.HTTP_SEARCH_TIMEOUT
+            )
+            response.raise_for_status()
+            data = response.json()
+            results = []
+            for item in data.get("organic", []):
+                results.append({
+                    "title": item.get("title", ""),
+                    "url": item.get("link", ""),
+                    "snippet": item.get("snippet", "")
+                })
+            return results
         except Exception as e:
             logger.error(f"Serper search failed for '{query}': {e}")
             return []
@@ -102,12 +104,13 @@ class SearchAgent:
         except Exception as e:
             logger.warning(f"Error fetching {url}: {e}")
             try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(url, timeout=15.0, follow_redirects=True)
-                    response.raise_for_status()
-                    text = re.sub(r'<[^>]+>', ' ', response.text)
-                    text = re.sub(r'\s+', ' ', text)
-                    return text.strip()[:5000]
+                if self._http_client is None:
+                    self._http_client = httpx.AsyncClient()
+                response = await self._http_client.get(url, timeout=settings.HTTP_FETCH_TIMEOUT, follow_redirects=True)
+                response.raise_for_status()
+                text = re.sub(r'<[^>]+>', ' ', response.text)
+                text = re.sub(r'\s+', ' ', text)
+                return text.strip()[:5000]
             except Exception as e2:
                 logger.warning(f"HTTP fallback also failed for {url}: {e2}")
                 return None
@@ -153,6 +156,12 @@ class SearchAgent:
             logger.warning(f"Error parsing search findings: {e}")
 
         return []
+
+    async def close(self):
+        """Close the HTTP client to free up resources."""
+        if self._http_client:
+            await self._http_client.aclose()
+            self._http_client = None
 
     def rate_source_credibility(self, url: str) -> float:
         high_cred = [".gov", ".edu", "reuters.com", "bloomberg.com", "wsj.com", "nvidia.com"]

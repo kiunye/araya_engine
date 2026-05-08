@@ -22,7 +22,8 @@ def get_model(model_name: str = "gemini-1.5-flash"):
     return ChatGoogleGenerativeAI(
         model=model_name,
         google_api_key=settings.GOOGLE_API_KEY,
-        temperature=0
+        temperature=0,
+        timeout=settings.HTTP_REQUEST_TIMEOUT  # Apply timeout configuration
     )
 
 
@@ -70,6 +71,15 @@ class LeadResearchAgent:
         response = await self.model.ainvoke(messages)
 
         plan_items = self._parse_plan(response.content)
+        
+        # Validate that we got meaningful results
+        if not plan_items:
+            logger.warning("LeadAgent generated empty plan, creating fallback task")
+            plan_items = [ResearchPlanItem(
+                task_id="fallback_task",
+                description=f"Research objective: {objective}",
+                status="pending"
+            )]
 
         return {
             "plan": plan_items,
