@@ -167,14 +167,16 @@ Once the engine is running, you can interact with it through the API endpoints d
 
 Example API usage (see `/docs` for detailed specifications):
 ```bash
-curl -X POST "http://localhost:8000/api/v1/research" \
+curl -X POST "http://localhost:8000/research/start" \
   -H "Content-Type: application/json" \
   -d '{
     "objective": "Analyze the impact of renewable energy adoption on global oil markets through 2030",
     "files": [],  # Optional: list of file paths or URLs
-    "urls": []    # Optional: additional web sources
   }'
 ```
+
+For detailed API documentation, see [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
+For security information, see [SECURITY.md](SECURITY.md).
 
 ## Environment Variables
 
@@ -200,6 +202,10 @@ When the engine is running, interactive API documentation is available at:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
+Additional documentation:
+- [API Documentation](API_DOCUMENTATION.md) - Detailed API reference and usage examples
+- [Security Policy](SECURITY.md) - Security best practices and vulnerability reporting
+
 ## Contributing
 
 We welcome contributions to improve the Araya Research Engine. Please follow these steps:
@@ -211,6 +217,22 @@ We welcome contributions to improve the Araya Research Engine. Please follow the
 5. Open a Pull Request
 
 Please ensure your code follows the project's coding standards and includes appropriate tests.
+
+### Development Guidelines
+
+- Follow PEP 8 style guide for Python code
+- Write meaningful commit messages
+- Add unit tests for new functionality
+- Update documentation when adding or modifying features
+- Ensure all tests pass before submitting a pull request
+
+### Code Review Process
+
+All contributions will be reviewed through our code review process which includes:
+1. Automated testing
+2. Manual code review for quality and security
+3. Documentation verification
+4. Performance impact assessment
 
 ## Acknowledgments
 
