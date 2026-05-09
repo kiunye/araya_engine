@@ -69,7 +69,7 @@ A production-grade multimodal agentic research engine designed to automate deep 
 
 1. **Clone the repository** (if not already done):
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/kiunye/araya_engine.git>
    cd araya-engine
    ```
 
